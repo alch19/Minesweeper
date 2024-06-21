@@ -11,12 +11,13 @@ public class GUI {
     private JButton[][] buttons;
     private int rows;
     private int cols;
+    private ImageIcon bomb;
+    private JPanel topPanel;
 
     public GUI(int rows, int cols, int totalMines) {
         this.rows=rows;
         this.cols=cols;
         game = new Minesweeper(rows, cols, totalMines);
-        game.setGUI(this);
         initGUI();
     }
 
@@ -24,16 +25,22 @@ public class GUI {
         frame = new JFrame("Minesweeper");
         panel = new JPanel(new GridLayout(rows, cols));
         buttons = new JButton[rows][cols];
+        bomb = new ImageIcon("bomb.png");
+        topPanel = new JPanel();
+        topPanel.setOpaque(true);
+        topPanel.setBackground(Color.BLACK);
+
 
         for(int i=0; i<rows; i++) {
             for(int j=0; j<cols; j++) {
                 buttons[i][j] = new JButton();
                 buttons[i][j].setPreferredSize(new Dimension(50,50));
+                buttons[i][j].setFocusPainted(false);
                 buttons[i][j].addActionListener(new ClickListener(i,j));
                 panel.add(buttons[i][j]);
             }
         }
-
+        frame.add(topPanel);
         frame.add(panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -58,7 +65,7 @@ public class GUI {
 
     private void leftClick(int row, int col) {
         if (game.uncoverCell(row, col)) {
-            updateButton(row, col);
+            
             updateGrid();
             if (game.isWon()) {
                 JOptionPane.showMessageDialog(frame, "You won!");
@@ -69,25 +76,17 @@ public class GUI {
         }
     }
 
-    public void updateButton(int row, int col) {
-        Cell cell = game.getGrid()[row][col];
-        if (cell.isMine()) {
-            buttons[row][col].setText("M");
-        } else {
-            buttons[row][col].setText(String.valueOf(cell.getAdjacentMines()));
-        }
-        buttons[row][col].setEnabled(false);
-    }
-
     private void updateGrid() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Cell cell = game.getGrid()[i][j];
                 if (!cell.isCovered()) {
                     if (cell.isMine()) {
-                        buttons[i][j].setText("M");
-                    } else {
+                        buttons[i][j].setIcon(bomb);
+                    } else if(cell.getAdjacentMines()!=0){
                         buttons[i][j].setText(String.valueOf(cell.getAdjacentMines()));
+                    } else {
+                        buttons[i][j].setText("");
                     }
                     buttons[i][j].setEnabled(false);
                 } else {
@@ -102,7 +101,7 @@ public class GUI {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 if (game.getGrid()[row][col].isMine()) {
-                    buttons[row][col].setText("M");
+                    buttons[row][col].setIcon(bomb);
                 }
             }
         }

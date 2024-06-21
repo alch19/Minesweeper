@@ -9,7 +9,7 @@ public class Minesweeper {
     private boolean gameLost;
     private boolean gameWon;
     private boolean firstClick;
-    private GUI gui;
+    
 
     public Minesweeper(int rows, int cols, int totalMines) {
         this.rows=rows;
@@ -19,10 +19,6 @@ public class Minesweeper {
         this.gameWon=false;
         this.firstClick=true;
         initializeGrid();
-    }
-
-    public void setGUI(GUI gui) {
-        this.gui=gui;
     }
 
     public void coverCell(int row, int col, boolean bool) {
@@ -88,9 +84,7 @@ public class Minesweeper {
         }
 
         grid[row][col].setCovered(false);
-        if (gui != null) {
-            gui.updateButton(row, col);
-        }
+        
 
         if (grid[row][col].isMine()) {
             gameLost = true;
@@ -107,7 +101,7 @@ public class Minesweeper {
 
     public void floodFill(int row, int col) {
         if (grid[row][col].getAdjacentMines() > 0) {
-            System.out.println("Hi");
+            grid[row][col].setCovered(false);
             return;
         }
         grid[row][col].setCovered(false);
@@ -123,7 +117,6 @@ public class Minesweeper {
             }
         }
     }
-
 
     private void checkWinCondition() {
         for (int i = 0; i < rows; i++) {
