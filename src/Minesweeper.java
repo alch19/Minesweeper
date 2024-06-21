@@ -9,6 +9,7 @@ public class Minesweeper {
     private boolean gameLost;
     private boolean gameWon;
     private boolean firstClick;
+    private GUI gui;
 
     public Minesweeper(int rows, int cols, int totalMines) {
         this.rows=rows;
@@ -18,6 +19,10 @@ public class Minesweeper {
         this.gameWon=false;
         this.firstClick=true;
         initializeGrid();
+    }
+
+    public void setGUI(GUI gui) {
+        this.gui=gui;
     }
 
     public void coverCell(int row, int col, boolean bool) {
@@ -83,41 +88,41 @@ public class Minesweeper {
         }
 
         grid[row][col].setCovered(false);
+        if (gui != null) {
+            gui.updateButton(row, col);
+        }
 
         if (grid[row][col].isMine()) {
             gameLost = true;
             return true;
         }
 
-        if (grid[row][col].getAdjacentMines() == 0) { // if all coords around a revealead square are not mines, reveal them all
+        if (grid[row][col].getAdjacentMines() == 0) {
             floodFill(row, col);
         }
+
         checkWinCondition();
         return true;
     }
 
     public void floodFill(int row, int col) {
-    if (!isInBounds(row, col) || !grid[row][col].isCovered() || grid[row][col].isFlagged()) {
-        return;
-    }
+        if (grid[row][col].getAdjacentMines() > 0) {
+            System.out.println("Hi");
+            return;
+        }
+        grid[row][col].setCovered(false);
 
-    grid[row][col].setCovered(false);
+        int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1}; // x coords
+        int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1}; // y coords
 
-    if (grid[row][col].getAdjacentMines() > 0) {
-        return;
-    }
-
-    int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1}; // x coords
-    int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1}; // y coords
-
-    for (int k = 0; k < 8; k++) {
-        int newRow = row + dx[k];
-        int newCol = col + dy[k];
-        if (isInBounds(newRow, newCol) && grid[newRow][newCol].isCovered()) {
-            floodFill(newRow, newCol);
+        for (int k = 0; k < 8; k++) {
+            int newRow = row + dx[k];
+            int newCol = col + dy[k];
+            if (isInBounds(newRow, newCol) && grid[newRow][newCol].isCovered()) {
+                floodFill(newRow, newCol);
+            }
         }
     }
-}
 
 
     private void checkWinCondition() {
