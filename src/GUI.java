@@ -234,11 +234,15 @@ public class GUI {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
+                
                 buttons[i][j].setText("");
                 buttons[i][j].setIcon(null);
                 buttons[i][j].setEnabled(true);
                 buttons[i][j].setBackground(null);
+               
             }
         }
+        panel.invalidate(); // Refresh the panel
+        panel.repaint();
     }
 }
