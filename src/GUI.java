@@ -28,7 +28,7 @@ public class GUI {
             for(int j=0; j<cols; j++) {
                 buttons[i][j] = new JButton();
                 buttons[i][j].setPreferredSize(new Dimension(50,50));
-                buttons[i][j].addActionListener(new clickListener(i,j));
+                buttons[i][j].addActionListener(new ClickListener(i,j));
                 panel.add(buttons[i][j]);
             }
         }
@@ -40,11 +40,11 @@ public class GUI {
         frame.setVisible(true);
     }
 
-    private class clickListener() implements ActionListener{
+    private class ClickListener implements ActionListener{
         private int row;
         private int col;
 
-        public clickListener(int row, int col) {
+        public ClickListener(int row, int col) {
             this.row = row;
             this.col = col;
         }
@@ -65,18 +65,7 @@ public class GUI {
                 revealMines();
             }
         }
-        private void handleLeftClick(int row, int col) {
-        if (game.uncoverCell(row, col)) {
-            updateButton(row, col);
-            if (game.isWon()) {
-                JOptionPane.showMessageDialog(frame, "You won!");
-            } else if (game.isLost()) {
-                JOptionPane.showMessageDialog(frame, "Game over!");
-                revealMines();
-            }
-        }
     }
-
     private void updateButton(int row, int col) {
         Cell cell = game.getGrid()[row][col];
         if (cell.isMine()) {
@@ -95,6 +84,5 @@ public class GUI {
                 }
             }
         }
-    }
     }
 }
