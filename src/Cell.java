@@ -1,4 +1,5 @@
 package src;
+
 public class Cell {
     private boolean mine;
     private int adjacentMines;
@@ -18,7 +19,7 @@ public class Cell {
         return mine;
     }
 
-    public int numAdjacentMines()
+    public int getAdjacentMines()
     {
         return adjacentMines;
     }
