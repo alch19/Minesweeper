@@ -12,7 +12,15 @@ public class GUI {
     private int rows;
     private int cols;
     private ImageIcon bomb;
+    private ImageIcon flag;
+
+    private JLabel flagLabel;
+    
     private JPanel topPanel;
+
+    private JLabel timerLabel;
+    private JLabel flagsRemainingLabel;
+    private Timer timer;
 
     public GUI(int rows, int cols, int totalMines) {
         this.rows=rows;
@@ -26,10 +34,29 @@ public class GUI {
         panel = new JPanel(new GridLayout(rows, cols));
         buttons = new JButton[rows][cols];
         bomb = new ImageIcon("bomb.png");
+
         topPanel = new JPanel();
         topPanel.setOpaque(true);
-        topPanel.setBackground(Color.BLACK);
+        topPanel.setBackground(new Color(0xe0e0e0));
+        topPanel.setPreferredSize(new Dimension(frame.getWidth(), 60));
 
+        flag = new ImageIcon("flag.png");
+        flagLabel = new JLabel(flag);
+
+        flagsRemainingLabel = new JLabel(String.valueOf(game.getNumBombs()));
+        flagsRemainingLabel.setFont(new Font("MV Boli", Font.PLAIN, 45));
+
+        JPanel flagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        flagPanel.setOpaque(false);
+        flagPanel.add(flagsRemainingLabel);
+        flagPanel.add(flagLabel);
+
+        timerLabel = new JLabel("Time: 0s");
+        timerLabel.setFont(new Font("MV Boli", Font.PLAIN, 40));
+
+        topPanel.setLayout(new BorderLayout());
+        topPanel.add(flagPanel, BorderLayout.CENTER);
+        topPanel.add(timerLabel, BorderLayout.EAST);
 
         for(int i=0; i<rows; i++) {
             for(int j=0; j<cols; j++) {
@@ -40,12 +67,28 @@ public class GUI {
                 panel.add(buttons[i][j]);
             }
         }
-        frame.add(topPanel);
-        frame.add(panel);
+        frame.setLayout(new BorderLayout());
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(panel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        startTimer();
+    }
+
+    private void startTimer() {
+        timer = new Timer(1000, new ActionListener() {
+            private int elapsedSeconds = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                elapsedSeconds++;
+                timerLabel.setText("Time: " + elapsedSeconds + "s");
+            }
+        });
+        timer.start();
     }
 
     private class ClickListener implements ActionListener{
@@ -65,13 +108,30 @@ public class GUI {
 
     private void leftClick(int row, int col) {
         if (game.uncoverCell(row, col)) {
-            
             updateGrid();
             if (game.isWon()) {
+                timer.stop();
                 JOptionPane.showMessageDialog(frame, "You won!");
+                revealMines();
+                disableButtons();
             } else if (game.isLost()) {
+                timer.stop();
                 JOptionPane.showMessageDialog(frame, "Game over!");
                 revealMines();
+                disableButtons();
+            }
+        }
+    }
+
+    private void disableButtons() {
+        for(int i=0; i<rows; i++) {
+            for(int j=0; j<cols; j++) {
+                if(buttons[i][j].isEnabled()) {
+                    buttons[i][j].setEnabled(false);
+                    buttons[i][j].setEnabled(false);
+                    buttons[i][j].setBackground(Color.lightGray);
+                    buttons[i][j].setOpaque(true);
+                }
             }
         }
     }

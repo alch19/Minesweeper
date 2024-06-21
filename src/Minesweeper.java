@@ -9,7 +9,6 @@ public class Minesweeper {
     private boolean gameLost;
     private boolean gameWon;
     private boolean firstClick;
-    
 
     public Minesweeper(int rows, int cols, int totalMines) {
         this.rows=rows;
@@ -139,5 +138,9 @@ public class Minesweeper {
 
     public Cell[][] getGrid() {
         return grid;
+    }
+
+    public int getNumBombs () {
+        return totalMines;
     }
 }
